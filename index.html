@@ -593,7 +593,7 @@ const GK_METRICS=[
 function gkgrid(stats){
   let idx=100;
   return`<div class="metric-grid">`+GK_METRICS.map(m=>{
-    const eligible=stats.filter(l=>l[m.k]!=null&&l[m.k]>0);
+    const eligible=stats.filter(l=>l[m.k]!=null&&l.gk_saves_p90!=null);
     if(!eligible.length)return'';
     const sorted=[...eligible].sort((a,b)=>{
       // for GA lower is better
