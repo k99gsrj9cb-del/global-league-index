@@ -48,7 +48,11 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .sc-label{font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
 .sc-val{font-size:19px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:2px}
 .sc-sub{font-size:10px;color:var(--ink3);font-weight:300}
-.tab-row{display:flex;border-bottom:2px solid var(--surface3);margin-bottom:22px;overflow-x:auto}
+.tab-row-wrap{position:relative;margin-bottom:22px}
+.tab-row-wrap::after{content:'';position:absolute;top:0;right:0;width:48px;height:100%;background:linear-gradient(to right,transparent,var(--surface));pointer-events:none;transition:opacity .2s}
+.tab-row-wrap.scrolled-end::after{opacity:0}
+.tab-row{display:flex;border-bottom:2px solid var(--surface3);overflow-x:auto;scrollbar-width:none}
+.tab-row::-webkit-scrollbar{display:none}
 .tab{font-family:var(--font);font-size:12px;font-weight:600;padding:9px 16px;color:var(--ink2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
 .tab.active{color:var(--red);border-bottom-color:var(--red)}
 .tab:hover:not(.active){background:var(--surface2)}
@@ -94,7 +98,12 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .pk-item{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
 .pk-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .lp-list{display:flex;flex-direction:column;gap:10px}
-.lp-card{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.lp-card{border:1px solid var(--border);border-radius:12px;overflow:clip}
+.player-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px 4px}
+.player-table-inner{width:420px}
+.player-table-inner .player-header{grid-template-columns:140px 52px 52px 52px 52px 60px}
+.player-table-inner .player-row{grid-template-columns:140px 52px 52px 52px 52px 60px}
+.player-table-inner .p-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lp-header{display:flex;align-items:center;cursor:pointer;background:var(--surface2)}
 .lp-accent{width:5px;align-self:stretch;flex-shrink:0}
 .lp-header-inner{display:flex;align-items:center;gap:12px;padding:14px 16px;flex:1;min-width:0}
@@ -115,20 +124,25 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .lp-sv{font-size:17px;font-weight:700;color:var(--navy);line-height:1;font-variant-numeric:tabular-nums}
 .lp-sl{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
 .lp-sh{font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px}
+.player-table-wrap{position:relative}
+.player-table-inner{}
+.scroll-hint{font-size:9px;font-weight:600;color:var(--ink4);letter-spacing:.04em;margin-bottom:4px;display:flex;align-items:center;gap:3px}
+.scroll-hint svg{flex-shrink:0}
 .player-header{display:grid;grid-template-columns:1fr 52px 52px 52px 52px 60px;gap:0 8px;padding:0 0 5px;border-bottom:1px solid var(--border2)}
-.ph{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.07em;text-align:right;user-select:none}
+.ph{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.07em;text-align:center;user-select:none}
 .ph.left{text-align:left}
 .ph-active{color:var(--red)!important;text-decoration:underline}
 .player-list{display:flex;flex-direction:column}
 .player-row{display:grid;grid-template-columns:1fr 52px 52px 52px 52px 60px;gap:0 8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
 .player-row:last-child{border-bottom:none}
 .player-row:hover{background:var(--surface2);margin:0 -16px;padding:7px 16px}
-.p-name{font-size:12px;font-weight:600;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.p-name{font-size:12px;font-weight:600;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.p-name.expanded{white-space:normal;overflow:visible;text-overflow:unset;color:var(--red)}
 .p-meta{font-size:10px;color:var(--ink3)}
 .p-pos{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
-.pv{font-size:12px;font-weight:600;color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
-.pv-hi{font-size:12px;font-weight:700;color:var(--red);text-align:right;font-variant-numeric:tabular-nums}
-.pmins{font-size:11px;color:var(--ink3);text-align:right;font-variant-numeric:tabular-nums}
+.pv{font-size:12px;font-weight:600;color:var(--ink2);text-align:center;font-variant-numeric:tabular-nums}
+.pv-hi{font-size:12px;font-weight:700;color:var(--red);text-align:center;font-variant-numeric:tabular-nums}
+.pmins{font-size:11px;color:var(--ink3);text-align:center;font-variant-numeric:tabular-nums}
 .sq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 .sq-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
 .sq-card.elim{opacity:.38}
@@ -207,14 +221,14 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
     </div>
   </div>
   <div class="stat-row" id="stats"></div>
-  <div class="tab-row">
+  <div class="tab-row-wrap" id="tab-row-wrap"><div class="tab-row" id="tab-row" onscroll="const el=this;el.parentElement.classList.toggle('scrolled-end',el.scrollLeft+el.clientWidth>=el.scrollWidth-4)">
     <button class="tab active" onclick="setTab('rankings',this)">Rankings</button>
     <button class="tab" onclick="setTab('profiles',this)">League profiles</button>
     <button class="tab" onclick="setTab('squads',this)">Squad makeup</button>
     <button class="tab" onclick="setTab('per90',this)">Per-90</button>
     <button class="tab" onclick="setTab('avgplayer',this)">Avg player</button>
     <button class="tab" onclick="setTab('movers',this)">Movers</button>
-  </div>
+  </div></div>
   <div id="t-rankings">
     <div id="share-rankings-wrap">
     <div class="section-label">Composite score &amp; average rating</div>
@@ -224,7 +238,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
       </div>
       <div class="score-method-body">Leagues ranked by <strong>composite score</strong> — a weighted sum of per-90 stats for all eligible players (min. ${MIN} mins played): <strong>Goals ×28 · Assists ×20 · Prog passes ×2.2 · Duels won ×1.8 · Tackles ×2.5 · Pressures ×1.2 · Interceptions ×2.0.</strong> All figures are per 90 minutes, weighted by minutes played.</div>
     </div>
-    <div class="rank-header-score"><div class="th center">#</div><div class="th"></div><div class="th left">League</div><div class="th">Score</div></div>
+    <div class="rank-header-score"><div class="th center">#</div><div class="th"></div><div class="th left">League <span style="font-size:8px;font-weight:400;opacity:0.5;text-transform:none;letter-spacing:0">↗ tap to expand</span></div><div class="th">Score</div></div>
     <div class="rank-score-list" id="score-list"></div>
     </div><!-- /share-rankings-wrap -->
     <div class="share-row"><button class="share-btn" onclick="shareSection('share-rankings-wrap','GLI Rankings · World Cup 2026')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button></div>
@@ -420,7 +434,7 @@ function outfieldRows(ps,sortCol){
   return sorted.map(p=>{
     const hi=p.name===top?.name;
     return`<div class="player-row">
-      <div><div style="display:flex;align-items:center;gap:5px"><span class="p-pos" style="color:${POS_COL[p.position]||PA};background:${POS_BG[p.position]||POS_BG.ATT}">${p.position||'—'}</span><span class="p-name">${p.name}</span></div>
+      <div><div style="display:flex;align-items:center;gap:5px"><span class="p-pos" style="color:${POS_COL[p.position]||PA};background:${POS_BG[p.position]||POS_BG.ATT}">${p.position||'—'}</span><span class="p-name" onclick="this.classList.toggle('expanded')">${p.name}</span></div>
       <div class="p-meta">${p.nationality||''} · ${p.club||''}</div></div>
       <div class="${hi?'pv-hi':'pv'}">${p.goals}</div>
       <div class="${hi?'pv-hi':'pv'}">${p.assists}</div>
@@ -432,7 +446,7 @@ function outfieldRows(ps,sortCol){
 function gkRows(ps){
   return [...ps].sort((a,b)=>b.minutes-a.minutes).map(p=>`
     <div class="player-row">
-      <div><div style="display:flex;align-items:center;gap:5px"><span class="p-pos" style="color:#888;background:rgba(136,136,136,0.11)">GK</span><span class="p-name">${p.name}</span></div>
+      <div><div style="display:flex;align-items:center;gap:5px"><span class="p-pos" style="color:#888;background:rgba(136,136,136,0.11)">GK</span><span class="p-name" onclick="this.classList.toggle('expanded')">${p.name}</span></div>
       <div class="p-meta">${p.nationality||''} · ${p.club||''}</div></div>
       <div class="pv">${p.gk_saves||0} / ${p.gk_ga||0}</div>
       <div class="pv">${p.gk_cs||0}</div>
@@ -451,7 +465,8 @@ function sortPlayers(lid,col){
   });
 }
 function phBtn(lid,col,label,cur){
-  return`<div class="ph${col==='name'?' left':''} ${cur===col?'ph-active':''}" data-lph="${lid}" data-col="${col}" onclick="sortPlayers('${lid}','${col}')" style="cursor:pointer">${label}</div>`;
+  const arrow=col==='name'?'':` <span style="opacity:0.5;font-size:8px">${cur===col?'▼':'↕'}</span>`;
+  return`<div class="ph${col==='name'?' left':''} ${cur===col?'ph-active':''}" data-lph="${lid}" data-col="${col}" onclick="sortPlayers('${lid}','${col}')" style="cursor:pointer">${label}${arrow}</div>`;
 }
 function rProfiles(){
   const r=allSt();
@@ -464,6 +479,7 @@ function rProfiles(){
     const rows=outfieldRows(outfield,cur);
     const gkSection=gks.length?`
       <div class="lp-sh" style="margin-top:14px">Goalkeepers</div>
+      <div class="player-table-wrap"><div class="player-table-inner">
       <div class="player-header">
         <div class="ph left">Player</div>
         <div class="ph">Saved / Conc'd</div>
@@ -472,7 +488,8 @@ function rProfiles(){
         <div class="ph">Rating</div>
         <div class="ph">Mins</div>
       </div>
-      <div class="player-list">${gkRows(gks)}</div>`:'';
+      <div class="player-list">${gkRows(gks)}</div>
+      </div></div>`:'';
     return`<div class="lp-card">
       <div class="lp-header" onclick="tPro('${l.id}')">
         <div class="lp-accent" style="background:${l.color}"></div>
@@ -496,7 +513,9 @@ function rProfiles(){
           <div class="lp-stat"><div class="lp-sv" style="color:var(--ink4)">${(l.prog_pass_p90||0).toFixed(1)}</div><div class="lp-sl">Prog pass / 90 <span class="mb-pending-badge">pending</span></div></div>
           <div class="lp-stat"><div class="lp-sv">${(l.tackles_p90||0).toFixed(2)}</div><div class="lp-sl">Tackles / 90</div></div>
         </div>
-        <div class="lp-sh">Outfield players · click a column header to sort</div>
+        <div class="lp-sh">Outfield players</div>
+        <div class="scroll-hint"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M15 6l6 6-6 6"/></svg>Scroll · tap header to sort</div>
+        <div class="player-table-wrap"><div class="player-table-inner">
         <div class="player-header">
           ${phBtn(l.id,'name','Player',cur)}
           ${phBtn(l.id,'goals','Goals',cur)}
@@ -506,6 +525,7 @@ function rProfiles(){
           ${phBtn(l.id,'minutes','Mins',cur)}
         </div>
         <div class="player-list" id="pl-${l.id}">${rows}</div>
+        </div></div>
         ${gkSection}
       </div></div>`;
   }).join('');
