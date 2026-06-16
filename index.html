@@ -98,9 +98,9 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .pk-item{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
 .pk-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .lp-list{display:flex;flex-direction:column;gap:10px}
-.lp-card{border:1px solid var(--border);border-radius:12px;overflow:clip}
-.player-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px 4px}
-.player-table-inner{width:420px}
+.lp-card{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.player-table-wrap{overflow-x:scroll;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.player-table-inner{min-width:420px;width:max-content}
 .player-table-inner .player-header{grid-template-columns:140px 52px 52px 52px 52px 60px}
 .player-table-inner .player-row{grid-template-columns:140px 52px 52px 52px 52px 60px}
 .player-table-inner .p-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -465,7 +465,7 @@ function sortPlayers(lid,col){
   });
 }
 function phBtn(lid,col,label,cur){
-  const arrow=col==='name'?'':` <span style="opacity:0.5;font-size:8px">${cur===col?'▼':'↕'}</span>`;
+  const arrow=col==='name'?'':` <span style="opacity:0.5;font-size:8px;font-style:normal">${cur===col?'▼':'▲▼'}</span>`;
   return`<div class="ph${col==='name'?' left':''} ${cur===col?'ph-active':''}" data-lph="${lid}" data-col="${col}" onclick="sortPlayers('${lid}','${col}')" style="cursor:pointer">${label}${arrow}</div>`;
 }
 function rProfiles(){
