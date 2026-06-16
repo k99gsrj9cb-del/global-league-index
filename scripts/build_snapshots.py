@@ -240,6 +240,16 @@ def aggregate_leagues(players: list[dict], lookup: dict, eliminated: set[str]) -
         # in player cards via gk_composite() but excluded from league ranking
         score = composite(lp90)
 
+        # GK league aggregates (per 90 averaged across eligible GKs)
+        if eligible_gk:
+            total_gk_mins = sum(p["minutes"] for p in eligible_gk)
+            gk_saves_p90  = round(sum(p["gk_saves"] for p in eligible_gk) * 90 / total_gk_mins, 2)
+            gk_ga_p90     = round(sum(p["gk_ga"]    for p in eligible_gk) * 90 / total_gk_mins, 2)
+            gk_cs_rate    = round(sum(p["gk_cs"]    for p in eligible_gk) / (total_gk_mins / 90), 2)
+            gk_save_pct   = round(sum(p["gk_save_pct"] for p in eligible_gk) / len(eligible_gk), 1)
+        else:
+            gk_saves_p90 = gk_ga_p90 = gk_cs_rate = gk_save_pct = None
+
         # avg_player_rating
         avg_rating = None
         if not eliminated or lid not in eliminated:
@@ -289,6 +299,10 @@ def aggregate_leagues(players: list[dict], lookup: dict, eliminated: set[str]) -
             "interceptions_p90": lp90["interceptions"],
             "composite_score":   score,
             "avg_player_rating": avg_rating,
+            "gk_saves_p90":      gk_saves_p90,
+            "gk_ga_p90":         gk_ga_p90,
+            "gk_cs_rate":        gk_cs_rate,
+            "gk_save_pct":       gk_save_pct,
             "eliminated":        lid in eliminated,
             "players":           player_dicts,
         })

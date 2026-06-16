@@ -3,7 +3,7 @@
   "phase": "Group stage",
   "date": "2026-06-12",
   "view": "cumulative",
-  "generated_at": "2026-06-16T12:51:09.821205Z",
+  "generated_at": "2026-06-16T19:26:34.660763Z",
   "previous_snapshot": "group_d1",
   "leagues": [
     {
@@ -31,6 +31,10 @@
       "interceptions_p90": 0.727,
       "composite_score": 16.78,
       "avg_player_rating": 17.74,
+      "gk_saves_p90": 1.67,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.33,
+      "gk_save_pct": 66.7,
       "eliminated": false,
       "players": [
         {
@@ -1100,6 +1104,10 @@
       "interceptions_p90": 0.711,
       "composite_score": 14.49,
       "avg_player_rating": 14.99,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -1549,6 +1557,10 @@
       "interceptions_p90": 0.858,
       "composite_score": 13.86,
       "avg_player_rating": 15.14,
+      "gk_saves_p90": 1.67,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 58.3,
       "eliminated": false,
       "players": [
         {
@@ -2558,6 +2570,10 @@
       "interceptions_p90": 1.441,
       "composite_score": 11.52,
       "avg_player_rating": 12.38,
+      "gk_saves_p90": 4.0,
+      "gk_ga_p90": 2.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 66.7,
       "eliminated": false,
       "players": [
         {
@@ -2927,6 +2943,10 @@
       "interceptions_p90": 1.25,
       "composite_score": 11.48,
       "avg_player_rating": 12.41,
+      "gk_saves_p90": 2.0,
+      "gk_ga_p90": 0.0,
+      "gk_cs_rate": 1.0,
+      "gk_save_pct": 100.0,
       "eliminated": false,
       "players": [
         {
@@ -3196,6 +3216,10 @@
       "interceptions_p90": 0.658,
       "composite_score": 9.58,
       "avg_player_rating": 11.03,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -3545,6 +3569,10 @@
       "interceptions_p90": 0.0,
       "composite_score": 9.19,
       "avg_player_rating": 9.44,
+      "gk_saves_p90": 4.0,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 80.0,
       "eliminated": false,
       "players": [
         {
@@ -3714,6 +3742,10 @@
       "interceptions_p90": 0.824,
       "composite_score": 6.95,
       "avg_player_rating": 7.28,
+      "gk_saves_p90": 1.5,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.5,
+      "gk_save_pct": 75.0,
       "eliminated": false,
       "players": [
         {
@@ -4063,6 +4095,10 @@
       "interceptions_p90": 0.383,
       "composite_score": 6.81,
       "avg_player_rating": 7.82,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -4512,6 +4548,10 @@
       "interceptions_p90": 1.381,
       "composite_score": 6.79,
       "avg_player_rating": 7.81,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -4801,6 +4841,10 @@
       "interceptions_p90": 0.483,
       "composite_score": 5.19,
       "avg_player_rating": 5.55,
+      "gk_saves_p90": 1.0,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 33.4,
       "eliminated": false,
       "players": [
         {
@@ -5110,6 +5154,10 @@
       "interceptions_p90": 0.751,
       "composite_score": 4.73,
       "avg_player_rating": 5.06,
+      "gk_saves_p90": 4.0,
+      "gk_ga_p90": 2.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 66.7,
       "eliminated": false,
       "players": [
         {
@@ -5679,6 +5727,10 @@
       "interceptions_p90": 0.5,
       "composite_score": 3.5,
       "avg_player_rating": 3.5,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -5808,6 +5860,10 @@
       "interceptions_p90": 0.231,
       "composite_score": 2.77,
       "avg_player_rating": 3.2,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -5977,6 +6033,10 @@
       "interceptions_p90": 0.414,
       "composite_score": 1.86,
       "avg_player_rating": 1.92,
+      "gk_saves_p90": null,
+      "gk_ga_p90": null,
+      "gk_cs_rate": null,
+      "gk_save_pct": null,
       "eliminated": false,
       "players": [
         {
@@ -6166,6 +6226,10 @@
       "interceptions_p90": 0.0,
       "composite_score": 0.0,
       "avg_player_rating": 0.0,
+      "gk_saves_p90": 3.0,
+      "gk_ga_p90": 2.5,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 59.0,
       "eliminated": false,
       "players": [
         {
@@ -6255,6 +6319,10 @@
       "interceptions_p90": 0.0,
       "composite_score": 0.0,
       "avg_player_rating": 0.0,
+      "gk_saves_p90": 3.0,
+      "gk_ga_p90": 1.0,
+      "gk_cs_rate": 0.0,
+      "gk_save_pct": 75.0,
       "eliminated": false,
       "players": [
         {

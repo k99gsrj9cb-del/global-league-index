@@ -23,7 +23,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .wm-icon{width:32px;height:32px;border-radius:8px;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .wm-main{font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.3px;line-height:1}
 .wm-sub{font-size:9px;font-weight:600;color:rgba(209,212,209,0.75);letter-spacing:.13em;text-transform:uppercase;margin-top:2px}
-.tagline{font-size:15px;color:rgba(255,255,255,0.88);font-weight:500;margin-bottom:18px;padding-left:42px;letter-spacing:.01em}
+.tagline{font-size:12px;color:rgba(255,255,255,0.88);font-weight:500;margin-bottom:18px;padding-left:42px;letter-spacing:.01em}
 .timeline-track{display:flex;gap:3px;overflow-x:auto;padding-bottom:18px}
 .timeline-track::-webkit-scrollbar{height:2px}
 .timeline-track::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
@@ -255,7 +255,12 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
     <div class="lp-list" id="lp-list"></div>
   </div>
   <div id="t-squads" style="display:none"><div class="sq-grid" id="sq-grid"></div></div>
-  <div id="t-per90" style="display:none"><div id="share-per90-wrap"><div class="notice" id="p90-notice"></div><div id="p90-grid"></div></div><div class="share-row"><button class="share-btn" onclick="shareSection('share-per90-wrap','GLI Per-90 Stats · World Cup 2026')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button></div></div>
+  <div id="t-per90" style="display:none">
+    <div class="notice" id="p90-notice"></div>
+    <div id="p90-grid"></div>
+    <div class="section-label" style="margin-top:24px">Goalkeepers</div>
+    <div id="p90-gk-grid"></div>
+  </div>
   <div id="t-avgplayer" style="display:none"><div class="notice">Leagues ranked by average player composite score per 90 minutes. Excludes eliminated leagues and those where fewer eligible players have played. † = fewer than 5 eligible players (treat with caution).</div><div id="avg-grid"></div></div>
   <div id="t-movers" style="display:none"><div id="mv-list"></div></div>
   <div class="fn-wrap">
@@ -561,17 +566,48 @@ const METRICS=[
   {k:'pressures_p90',lb:'Pressures / 90',f:v=>v.toFixed(1),pending:true},
   {k:'interceptions_p90',lb:'Interceptions / 90',f:v=>v.toFixed(2)},
 ];
+const SHARE_ICON=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+function mblock(m,stats,ff,idx){
+  const eligible=ff?stats.filter(ff):stats;
+  const sorted=[...eligible].sort((a,b)=>(b[m.k]||0)-(a[m.k]||0));
+  const mx=sorted[0]?.[m.k]||1;
+  const rows=sorted.map((l,i)=>`<div class="mri${l.eliminated?' elim':''}"><span class="mri-rank">${i+1}</span><span class="rk-stripe" style="background:${l.eliminated?'#ccc':l.color};height:12px"></span><span class="mri-name">${l.short||l.name.slice(0,4)}${l.eligible_flag&&ff?'†':''}</span><div class="mri-bar-track"><div class="mri-bar-fill" style="width:${Math.round((l[m.k]||0)/mx*100)}%"></div></div><span class="mri-val">${m.f(l[m.k]||0)}</span></div>`).join('');
+  const excl=ff?stats.filter(l=>!ff(l)):[];
+  const xr=excl.map(l=>`<div class="mri"><span class="mri-rank" style="color:var(--ink4)">—</span><span class="rk-stripe" style="background:${l.color};opacity:.2;height:12px"></span><span class="mri-name" style="color:var(--ink4)">${l.short||l.name.slice(0,4)}</span><div class="mri-bar-track"></div><span class="mri-excl">&lt;90m</span></div>`).join('');
+  const wid=`p90-block-${idx}`;
+  return`<div id="${wid}"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="mb-title" style="margin:0">${m.lb}</div><button class="share-btn" style="padding:4px 8px;font-size:10px" onclick="shareSection('${wid}','GLI · ${m.lb} · World Cup 2026')">${SHARE_ICON}Share</button></div>${rows}${xr}</div>`;
+}
 function mgrid(stats,ff){
+  let idx=0;
   return`<div class="metric-grid">`+METRICS.map(m=>{
-    const eligible=ff?stats.filter(ff):stats;
-    const sorted=[...eligible].sort((a,b)=>(b[m.k]||0)-(a[m.k]||0));
-    const mx=sorted[0]?.[m.k]||1;
-    const rows=sorted.map((l,i)=>`<div class="mri${l.eliminated?' elim':''}"><span class="mri-rank">${i+1}</span><span class="rk-stripe" style="background:${l.eliminated?'#ccc':l.color};height:12px"></span><span class="mri-name">${l.short||l.name.slice(0,4)}${l.eligible_flag&&ff?'†':''}</span><div class="mri-bar-track"><div class="mri-bar-fill" style="width:${Math.round((l[m.k]||0)/mx*100)}%"></div></div><span class="mri-val">${m.f(l[m.k]||0)}</span></div>`).join('');
-    const excl=ff?stats.filter(l=>!ff(l)):[];
-    const xr=excl.map(l=>`<div class="mri"><span class="mri-rank" style="color:var(--ink4)">—</span><span class="rk-stripe" style="background:${l.color};opacity:.2;height:12px"></span><span class="mri-name" style="color:var(--ink4)">${l.short||l.name.slice(0,4)}</span><div class="mri-bar-track"></div><span class="mri-excl">&lt;90m</span></div>`).join('');
-    const pendingNote=m.pending?`<div class="mb-pending">Data pending from FBref</div>`:'';
     if(m.pending)return'';
-    return`<div><div class="mb-title">${m.lb}</div>${rows}${xr}</div>`;
+    return mblock(m,stats,ff,idx++);
+  }).join('')+`</div>`;
+}
+const GK_METRICS=[
+  {k:'gk_saves_p90',lb:'Saves / 90',f:v=>v.toFixed(2)},
+  {k:'gk_ga_p90',lb:'Goals conceded / 90',f:v=>v.toFixed(2)},
+  {k:'gk_cs_rate',lb:'Clean sheet rate',f:v=>v.toFixed(2)},
+  {k:'gk_save_pct',lb:'Save %',f:v=>v.toFixed(1)},
+];
+function gkgrid(stats){
+  let idx=100;
+  return`<div class="metric-grid">`+GK_METRICS.map(m=>{
+    const eligible=stats.filter(l=>l[m.k]!=null&&l[m.k]>0);
+    if(!eligible.length)return'';
+    const sorted=[...eligible].sort((a,b)=>{
+      // for GA lower is better
+      if(m.k==='gk_ga_p90')return(a[m.k]||0)-(b[m.k]||0);
+      return(b[m.k]||0)-(a[m.k]||0);
+    });
+    const mx=m.k==='gk_ga_p90'?sorted[sorted.length-1]?.[m.k]||1:sorted[0]?.[m.k]||1;
+    const rows=sorted.map((l,i)=>{
+      const pct=m.k==='gk_ga_p90'?Math.round((1-(l[m.k]||0)/mx)*100):Math.round((l[m.k]||0)/mx*100);
+      return`<div class="mri${l.eliminated?' elim':''}"><span class="mri-rank">${i+1}</span><span class="rk-stripe" style="background:${l.eliminated?'#ccc':l.color};height:12px"></span><span class="mri-name">${l.short||l.name.slice(0,4)}</span><div class="mri-bar-track"><div class="mri-bar-fill" style="width:${pct}%"></div></div><span class="mri-val">${m.f(l[m.k]||0)}</span></div>`;
+    }).join('');
+    const wid=`p90-gk-block-${idx}`;
+    idx++;
+    return`<div id="${wid}"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><div class="mb-title" style="margin:0">${m.lb}</div><button class="share-btn" style="padding:4px 8px;font-size:10px" onclick="shareSection('${wid}','GLI · ${m.lb} · World Cup 2026')">${SHARE_ICON}Share</button></div>${rows}</div>`;
   }).join('')+`</div>`;
 }
 function rP90(){
@@ -582,6 +618,7 @@ function rP90(){
     s?.ko?`Cumulative Day 1 through ${snap?.phase}. Eliminated leagues dimmed.`:
     `Cumulative Day 1 through ${s?.label||''} · ${dt}.`;
   document.getElementById('p90-grid').innerHTML=mgrid(allSt(),null);
+  document.getElementById('p90-gk-grid').innerHTML=gkgrid(allSt());
 }
 function rAvg(){
   const leagues=allSt().filter(l=>l.avg_player_rating!=null&&!l.eliminated);
