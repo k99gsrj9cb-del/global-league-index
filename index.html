@@ -236,7 +236,13 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
       <div class="score-method-hdr" onclick="this.parentElement.classList.toggle('open')">
         <span>How ratings are calculated</span><span class="score-method-chev">›</span>
       </div>
-      <div class="score-method-body">Leagues ranked by <strong>composite score</strong> — a weighted sum of per-90 stats for all eligible players (min. ${MIN} mins played): <strong>Goals ×28 · Assists ×20 · Prog passes ×2.2 · Duels won ×1.8 · Tackles ×2.5 · Pressures ×1.2 · Interceptions ×2.0.</strong> All figures are per 90 minutes, weighted by minutes played.</div>
+      <div class="score-method-body">
+        <p style="margin:0 0 8px"><strong>The Global League Index tracks which leagues are having the biggest impact on the 2026 World Cup.</strong></p>
+        <p style="margin:0 0 8px">Each league receives a composite score based on how its eligible players (those who have played at least 60 minutes) are performing per 90 minutes on the pitch. Stats are weighted by minutes played, so a player who has featured more heavily counts for more.</p>
+        <p style="margin:0 0 8px"><strong>Goals and assists carry the most weight</strong> — a goal is worth ×28 and an assist ×20 — reflecting that direct contributions to scoring are the clearest measure of impact. Defensive and midfield contributions are also rewarded: tackles (×2.5), interceptions (×2.0), progressive passes (×2.2), duels won (×1.8) and pressures (×1.2).</p>
+        <p style="margin:0 0 8px"><strong>Goalkeepers are tracked separately</strong> within each league profile using a dedicated formula based on saves, goals conceded and clean sheets. They are not included in the overall league composite score, as goalkeeper stats operate on a different scale to outfield metrics.</p>
+        <p style="margin:0"><em>Progressive passes, duels won and pressures are marked as pending — the data is available but we're still calibrating the weightings to make sure they reflect real impact fairly.</em></p>
+      </div>
     </div>
     <div class="rank-header-score"><div class="th center">#</div><div class="th"></div><div class="th left">League <span style="font-size:8px;font-weight:400;opacity:0.5;text-transform:none;letter-spacing:0">↗ tap to expand</span></div><div class="th">Score</div></div>
     <div class="rank-score-list" id="score-list"></div>
