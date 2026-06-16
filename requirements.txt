@@ -1,0 +1,2 @@
+# No third-party dependencies — scraper and pipeline use Python stdlib only.
+# Python 3.9+ required.

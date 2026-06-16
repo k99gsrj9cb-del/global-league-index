@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:fbref.com)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "Bash(ls \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/CODE\" 2>/dev/null && echo \"---\" && ls \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/\" 2>/dev/null)",
+      "Bash(cp \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/global-league-index-desktop.html\" \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/CODE/index.html\")",
+      "Bash(cp \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/global-league-index-mobile.html\" \"/Users/timmillar/Documents/GLOBAL LEAGUE INDEX/CODE/mobile.html\")"
+    ]
+  }
+}

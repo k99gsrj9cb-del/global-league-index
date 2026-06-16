@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Global League Index — Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --red:#C4291C;--green:#3CAC3B;--navy:#2A398D;--lgrey:#D1D4D1;
+  --ink:#2A398D;--ink2:#474A4A;--ink3:#6b7080;--ink4:#9ea3b0;
+  --up:#3CAC3B;--dn:#C4291C;
+  --surface:#ffffff;--surface2:#f5f6f8;--surface3:#eef0f5;
+  --border:rgba(42,57,141,0.10);--border2:rgba(42,57,141,0.20);
+  --pos-att:#EB5027;--pos-mid:#394CF3;--pos-def:#3CAC3B;
+  --font:'Poppins',system-ui,sans-serif;
+}
+body{font-family:var(--font);color:var(--ink2);background:var(--surface);margin:0}
+.app{max-width:480px;margin:0 auto;min-height:100vh}
+.m-head{background:var(--navy);padding:16px 16px 0}
+.m-wm{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.m-icon{width:28px;height:28px;border-radius:8px;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m-title{font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.2px;line-height:1}
+.m-sub{font-size:8px;font-weight:600;color:rgba(209,212,209,0.7);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.m-tagline{font-size:10px;color:rgba(209,212,209,0.4);padding-left:37px;margin-bottom:14px}
+.m-tl{display:flex;gap:3px;overflow-x:auto;padding-bottom:14px;-webkit-overflow-scrolling:touch}
+.m-tl::-webkit-scrollbar{display:none}
+.m-tn{flex-shrink:0;font-size:10px;font-weight:600;padding:5px 9px;border-radius:6px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:rgba(209,212,209,0.6)}
+.m-tn.active{background:var(--red);border-color:var(--red);color:#fff}
+.m-tn.ko{border-style:dashed}
+.m-tn-sep{width:1px;height:22px;background:rgba(255,255,255,0.12);flex-shrink:0;margin:0 2px;align-self:center}
+.m-body{padding:14px 14px 40px}
+.m-ctx{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.m-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(196,41,28,0.10);border:1px solid rgba(196,41,28,0.28);border-radius:20px;padding:5px 11px}
+.m-pill-dot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0}
+.m-pill-text{font-size:10px;font-weight:600;color:var(--red);letter-spacing:.03em}
+.m-vt{display:flex;border:1px solid var(--border2);border-radius:8px;overflow:hidden}
+.m-vt-btn{font-size:10px;font-weight:600;padding:6px 11px;background:var(--surface);color:var(--ink3);cursor:pointer;border:none;text-transform:uppercase;letter-spacing:.04em}
+.m-vt-btn.active{background:var(--navy);color:#fff}
+.m-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.m-sc{background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border)}
+.m-sc-lbl{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.m-sc-val{font-size:16px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:2px}
+.m-sc-sub{font-size:9px;color:var(--ink3)}
+.m-nav{position:relative;margin-bottom:16px;z-index:100}
+.m-nav-trigger{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.m-nav-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.m-nav-active{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.05em}
+.m-nav-chev{font-size:14px;color:var(--ink3);transition:transform .15s}
+.m-nav-chev.open{transform:rotate(180deg)}
+.m-nav-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(42,57,141,0.12)}
+.m-nav-dd.open{display:block}
+.m-nav-item{padding:14px 16px;font-size:13px;font-weight:500;color:var(--ink2);cursor:pointer;border-bottom:1px solid var(--border)}
+.m-nav-item:last-child{border-bottom:none}
+.m-nav-item.active{color:var(--red);font-weight:700}
+.m-nav-item.active::after{content:'✓';float:right;color:var(--red)}
+.m-card-list{display:flex;flex-direction:column;gap:10px}
+.m-card{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.m-card.elim{opacity:.32}
+.m-card-hdr{display:flex;align-items:center;cursor:pointer;background:var(--surface2)}
+.m-card-accent{width:4px;align-self:stretch;flex-shrink:0}
+.m-card-inner{display:flex;align-items:center;gap:10px;padding:13px 12px;flex:1;min-width:0}
+.m-card-rank{font-size:20px;font-weight:700;color:var(--ink4);width:24px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.m-card-info{flex:1;min-width:0}
+.m-card-name{font-size:14px;font-weight:700;color:var(--ink2);line-height:1.2}
+.m-card-country{font-size:10px;color:var(--ink3);margin-top:2px}
+.m-card-score-wrap{text-align:right;flex-shrink:0}
+.m-card-score{font-size:22px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+.m-card-score-lbl{font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.m-card-chev{font-size:16px;color:var(--ink4);padding:0 12px;flex-shrink:0;transition:transform .18s}
+.m-card-chev.open{transform:rotate(90deg)}
+.m-elim-tag{font-size:8px;font-weight:600;color:var(--ink4);text-transform:uppercase;background:var(--surface);border:1px solid var(--border2);border-radius:3px;padding:1px 4px;margin-left:4px;vertical-align:middle}
+.m-chg{font-size:10px;font-weight:700}
+.m-bar-row{display:flex;align-items:center;gap:8px;padding:0 12px 11px 46px}
+.m-bar-track{flex:1;height:3px;background:var(--lgrey);border-radius:2px}
+.m-bar-fill{height:3px;border-radius:2px;background:var(--navy)}
+.m-card-body{display:none;border-top:1px solid var(--border)}
+.m-card-body.open{display:block}
+.m-cb-sec{padding:13px 14px;border-bottom:1px solid var(--border)}
+.m-cb-sec:last-child{border-bottom:none}
+.m-cb-lbl{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px}
+.m-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.m-ss{background:var(--surface2);border-radius:8px;padding:8px 8px}
+.m-ss-val{font-size:15px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+.m-ss-lbl{font-size:8px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.m-avg-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(42,57,141,0.08);border:1px solid rgba(42,57,141,0.18);border-radius:20px;padding:3px 10px}
+.m-avg-val{font-size:12px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.m-avg-lbl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.m-pos-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;gap:1px;margin-bottom:8px}
+.m-pos-row{display:flex;align-items:center;gap:8px;padding:3px 0}
+.m-pos-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.m-pos-lbl{font-size:10px;font-weight:500;color:var(--ink3);width:56px;text-transform:uppercase;letter-spacing:.04em}
+.m-pos-track{flex:1;background:var(--lgrey);border-radius:2px;height:3px}
+.m-pos-fill{height:3px;border-radius:2px}
+.m-pos-n{font-size:11px;font-weight:600;color:var(--ink2);width:20px;text-align:right}
+.m-pos-pct{font-size:10px;color:var(--ink3);width:26px;text-align:right}
+.m-summary{font-size:12px;color:var(--ink3);line-height:1.7}
+.m-player-hdr{display:grid;grid-template-columns:1fr 36px 36px 36px 48px;gap:0 6px;padding:0 0 6px;border-bottom:1px solid var(--border2)}
+.m-ph{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em;text-align:right}
+.m-ph.left{text-align:left}
+.m-pr{display:grid;grid-template-columns:1fr 36px 36px 36px 48px;gap:0 6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.m-pr:last-child{border-bottom:none}
+.m-p-name{font-size:12px;font-weight:600;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-p-meta{font-size:9px;color:var(--ink3)}
+.m-p-pos{display:inline-block;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;text-transform:uppercase;margin-right:3px}
+.m-pv{font-size:12px;font-weight:600;color:var(--ink2);text-align:right;font-variant-numeric:tabular-nums}
+.m-pv-hi{font-size:12px;font-weight:700;color:var(--red);text-align:right;font-variant-numeric:tabular-nums}
+.m-pmins{font-size:10px;color:var(--ink3);text-align:right;font-variant-numeric:tabular-nums}
+.m-metric-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.m-metric-item:last-child{border-bottom:none}
+.m-metric-item.elim{opacity:.32}
+.m-metric-rank{font-size:10px;font-weight:700;color:var(--ink4);width:16px;text-align:center;flex-shrink:0}
+.m-metric-lbl{font-size:11px;font-weight:500;color:var(--ink2);flex:1}
+.m-metric-track{width:64px;height:3px;background:var(--lgrey);border-radius:2px;flex-shrink:0}
+.m-metric-fill{height:3px;border-radius:2px;background:var(--navy)}
+.m-metric-val{font-size:11px;font-weight:700;color:var(--navy);width:36px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.m-mv-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--border)}
+.m-mv-row:last-child{border-bottom:none}
+.m-mv-row.elim{opacity:.32}
+.m-notice{font-size:11px;color:var(--ink3);background:var(--surface2);border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6}
+.m-fn{background:var(--surface2);border-top:1px solid var(--border);margin:14px -14px 0;padding:16px 14px}
+.m-fn-head{font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.m-fn-item{display:flex;gap:7px;margin-bottom:4px;align-items:baseline}
+.m-fn-m{font-size:9px;font-weight:600;color:var(--ink3);flex-shrink:0;min-width:18px}
+.m-fn-t{font-size:10px;color:var(--ink3);line-height:1.6}
+.m-fn-t a{color:var(--red);text-decoration:none}
+.m-fn-div{height:1px;background:var(--border);margin:8px 0}
+.m-sim{font-size:10px;color:var(--ink3);background:rgba(196,41,28,0.07);border:1px solid rgba(196,41,28,0.2);border-radius:8px;padding:8px 10px;margin-bottom:12px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="m-head">
+    <div class="m-wm">
+      <div class="m-icon">
+        <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" stroke="white" stroke-width="1.5"/>
+          <path d="M8 1.5C8 1.5 6 4 6 8s2 6.5 2 6.5" stroke="white" stroke-width="1.2"/>
+          <path d="M8 1.5C8 1.5 10 4 10 8s-2 6.5-2 6.5" stroke="white" stroke-width="1.2"/>
+          <path d="M1.5 8h13M2 5h12M2 11h12" stroke="white" stroke-width="1"/>
+        </svg>
+      </div>
+      <div><div class="m-title">Global League Index</div><div class="m-sub">World Cup · 2026</div></div>
+    </div>
+    <div class="m-tagline">Which domestic league performs best on the world stage?</div>
+    <div class="m-tl" id="m-tl"></div>
+  </div>
+  <div class="m-body">
+    <div class="m-ctx">
+      <div class="m-pill"><span class="m-pill-dot"></span><span class="m-pill-text" id="m-phase">Group stage</span></div>
+      <div class="m-vt">
+        <button class="m-vt-btn active" onclick="setView('cumulative',this)">Cumul.</button>
+        <button class="m-vt-btn" onclick="setView('isolated',this)">Isolated</button>
+      </div>
+    </div>
+    <div class="m-stats" id="m-stats"></div>
+    <div class="m-nav" id="m-nav">
+      <div class="m-nav-trigger" onclick="toggleNav()">
+        <span class="m-nav-label">View</span>
+        <span class="m-nav-active" id="m-nav-active">Rankings</span>
+        <span class="m-nav-chev" id="m-nav-chev">▾</span>
+      </div>
+      <div class="m-nav-dd" id="m-nav-dd">
+        <div class="m-nav-item active" onclick="setTab('rankings',this)">Rankings</div>
+        <div class="m-nav-item" onclick="setTab('per90',this)">Per-90 by metric</div>
+        <div class="m-nav-item" onclick="setTab('movers',this)">Movers</div>
+      </div>
+    </div>
+    <div id="t-rankings"><div class="m-card-list" id="m-cards"></div></div>
+    <div id="t-per90" style="display:none"><div class="m-notice" id="m-p90-notice"></div><div id="m-p90-grid"></div></div>
+    <div id="t-movers" style="display:none"><div id="m-mv-list"></div></div>
+    <div class="m-fn">
+      <div class="m-fn-head">Notes &amp; sources</div>
+      <div class="m-fn-item"><span class="m-fn-m">[1]</span><span class="m-fn-t"><strong>FBref / Opta</strong> — match-by-match player stats, 2026 FIFA World Cup. <a href="https://fbref.com/en/comps/1/2026/2026-FIFA-World-Cup-Stats">fbref.com</a></span></div>
+      <div class="m-fn-item"><span class="m-fn-m">[2]</span><span class="m-fn-t"><strong>Transfermarkt</strong> — club-to-league mapping. <a href="https://www.transfermarkt.com">transfermarkt.com</a></span></div>
+      <div class="m-fn-div"></div>
+      <div class="m-fn-item"><span class="m-fn-m">[4]</span><span class="m-fn-t"><strong>Composite:</strong> Goals (×28) + Assists (×20) + Prog passes (×2.2) + Duels (×1.8) + Tackles (×2.5) + Pressures (×1.2) + Interceptions (×2.0).</span></div>
+      <div class="m-fn-item"><span class="m-fn-m">[5]</span><span class="m-fn-t"><strong>Eligibility:</strong> &gt;60 mins played. Player counts reflect only those who have appeared — squad members yet to play are not included. Counts rise as the tournament progresses.</span></div>
+      <div class="m-fn-item"><span class="m-fn-m">[6]</span><span class="m-fn-t"><strong>Data visualisation page:</strong> planned feature — see project timeline notes.</span></div>
+    </div>
+  </div>
+</div>
+<script>
+const PA='#EB5027',PM='#394CF3',PD='#3CAC3B',MIN=60;
+const POS_COL={ATT:PA,MID:PM,DEF:PD,GK:'#888'};
+const POS_BG={ATT:'rgba(235,80,39,0.11)',MID:'rgba(57,76,243,0.11)',DEF:'rgba(60,172,59,0.11)',GK:'rgba(136,136,136,0.11)'};
+
+// ── State ──────────────────────────────────────────────────────────────────
+let manifest=null,snap=null,prevSnap=null,currentId=null,vm='cumulative';
+let activeTab='rankings',navOpen=false;
+
+// ── Data helpers ───────────────────────────────────────────────────────────
+function allSt(){return snap?.leagues||[];}
+function prank(id){const i=prevSnap?.leagues?.findIndex(l=>l.id===id);return(i!=null&&i>=0)?i+1:null;}
+function snapFileId(baseId,view){const m=manifest?.snapshots?.find(s=>s.id===baseId);return m?.ko?`${baseId}_${view}`:baseId;}
+
+// ── Network ────────────────────────────────────────────────────────────────
+async function loadManifest(){
+  try{manifest=await fetch('data/manifest.json').then(r=>{if(!r.ok)throw 0;return r.json()});}
+  catch{manifest=null;}
+}
+async function loadSnap(baseId){
+  if(!manifest)return;
+  const fid=snapFileId(baseId,vm);
+  try{
+    snap=await fetch(`data/snapshots/${fid}.json`).then(r=>{if(!r.ok)throw new Error(`${fid}.json not found`);return r.json()});
+    currentId=baseId;
+    const idx=manifest.snapshots.findIndex(s=>s.id===baseId);
+    if(idx>0){
+      const prevFid=snapFileId(manifest.snapshots[idx-1].id,'cumulative');
+      try{prevSnap=await fetch(`data/snapshots/${prevFid}.json`).then(r=>r.ok?r.json():null);}
+      catch{prevSnap=null;}
+    }else{prevSnap=null;}
+    render();
+  }catch(e){
+    document.getElementById('m-cards').innerHTML=`<p style="padding:16px;color:var(--ink3);font-size:13px">${e.message}</p>`;
+  }
+}
+
+// ── Timeline ───────────────────────────────────────────────────────────────
+function rTL(){
+  if(!manifest)return;
+  let h='',last='';
+  manifest.snapshots.forEach(s=>{
+    const ph=s.ko?'ko':'g';
+    if(ph!==last){if(last!=='')h+=`<span class="m-tn-sep"></span>`;last=ph;}
+    h+=`<button class="m-tn${s.id===currentId?' active':''}${s.ko?' ko':''}" onclick="snap('${s.id}')" title="${s.phase} · ${s.date}">${s.label}</button>`;
+  });
+  document.getElementById('m-tl').innerHTML=h;
+  document.querySelector('.m-tn.active')?.scrollIntoView({inline:'nearest',block:'nearest'});
+}
+
+// ── Stats strip ────────────────────────────────────────────────────────────
+function rStats(){
+  const r=allSt();
+  const act=r.filter(l=>!l.eliminated);
+  const ta=[...act].filter(l=>l.avg_player_rating!=null).sort((a,b)=>b.avg_player_rating-a.avg_player_rating)[0];
+  const m=manifest?.snapshots?.find(s=>s.id===currentId);
+  document.getElementById('m-phase').textContent=snap?.phase||'';
+  document.getElementById('m-stats').innerHTML=
+    `<div class="m-sc"><div class="m-sc-lbl">Leader</div><div class="m-sc-val" style="font-size:12px;line-height:1.3">${r[0]?.name||'—'}</div><div class="m-sc-sub">${r[0]?.composite_score||'—'} pts</div></div>`+
+    `<div class="m-sc"><div class="m-sc-lbl">Best avg rating</div><div class="m-sc-val" style="font-size:13px">${ta?.short||'—'}</div><div class="m-sc-sub">${ta?.avg_player_rating??'—'}</div></div>`+
+    `<div class="m-sc"><div class="m-sc-lbl">Players tracked</div><div class="m-sc-val">${r.reduce((s,l)=>s+(l.players_total||0),0)}</div><div class="m-sc-sub">${r.reduce((s,l)=>s+(l.players_eligible||0),0)} eligible</div></div>`+
+    `<div class="m-sc"><div class="m-sc-lbl">Active leagues</div><div class="m-sc-val">${act.length}<span style="font-size:10px;font-weight:400;color:var(--ink3)"> / ${r.length}</span></div><div class="m-sc-sub">${r.length-act.length} eliminated</div></div>`;
+}
+
+// ── League cards ───────────────────────────────────────────────────────────
+function autoSummary(l){
+  const ps=l.players||[];
+  const top=[...ps].sort((a,b)=>(b.goals+b.assists)-(a.goals+a.assists))[0];
+  let s=`To date, ${l.players_total} ${l.name} players have featured in the tournament, with ${l.players_eligible} meeting the ${MIN}-minute eligibility threshold.`;
+  if(top&&(top.goals+top.assists)>0)s+=` Top: ${top.name} ${top.goals}G ${top.assists}A.`;
+  return s;
+}
+function rCards(){
+  const r=allSt();const max=r[0]?.composite_score||1;
+  document.getElementById('m-cards').innerHTML=r.map((l,i)=>{
+    const pct=Math.round((l.composite_score/max)*100);
+    const prev=prank(l.id);const rank=i+1;
+    let chg='';
+    if(prev!==null){const d=prev-rank;if(d>0)chg=`<span class="m-chg" style="color:#3CAC3B">▲${d}</span>`;else if(d<0)chg=`<span class="m-chg" style="color:#C4291C">▼${Math.abs(d)}</span>`;}
+    const ps=l.players||[];
+    const tg=ps.reduce((s,p)=>s+p.goals,0),ta=ps.reduce((s,p)=>s+p.assists,0);
+    const topP=[...ps].sort((a,b)=>(b.goals+b.assists)-(a.goals+a.assists))[0];
+    const aN=l.att_n||0,mN=l.mid_n||0,dN=l.def_n||0,mx=Math.max(aN,mN,dN)||1;
+    const playerRows=[...ps].sort((a,b)=>b.minutes-a.minutes).map(p=>{
+      const hi=p.name===topP?.name;
+      return`<div class="m-pr"><div><div style="display:flex;align-items:center;gap:4px"><span class="m-p-pos" style="color:${POS_COL[p.position]||PA};background:${POS_BG[p.position]||POS_BG.ATT}">${p.position||'—'}</span><span class="m-p-name">${p.name}</span></div><div class="m-p-meta">${p.nationality||''} · ${p.club||''}</div></div><div class="${hi?'m-pv-hi':'m-pv'}">${p.goals}</div><div class="${hi?'m-pv-hi':'m-pv'}">${p.assists}</div><div class="${hi?'m-pv-hi':'m-pv'}">${p.goals+p.assists}</div><div class="m-pmins">${p.minutes}'</div></div>`;
+    }).join('');
+    return`<div class="m-card${l.eliminated?' elim':''}">
+      <div class="m-card-hdr" onclick="tCard('${l.id}')">
+        <div class="m-card-accent" style="background:${l.color}"></div>
+        <div class="m-card-inner">
+          <div class="m-card-rank">${rank}</div>
+          <div class="m-card-info"><div class="m-card-name">${l.name}${l.eliminated?`<span class="m-elim-tag">out</span>`:''}</div><div class="m-card-country">${l.country} ${chg}</div></div>
+          <div class="m-card-score-wrap"><div class="m-card-score">${l.composite_score}</div><div class="m-card-score-lbl">Score</div></div>
+        </div>
+        <div class="m-card-chev" id="mcc-${l.id}">›</div>
+      </div>
+      <div class="m-bar-row"><div class="m-bar-track"><div class="m-bar-fill" style="width:${pct}%"></div></div></div>
+      <div class="m-card-body" id="mcb-${l.id}">
+        <div class="m-cb-sec"><div class="m-cb-lbl">Per-90 stats</div>
+          <div class="m-stat-strip">
+            <div class="m-ss"><div class="m-ss-val">${(l.goals_p90||0).toFixed(2)}</div><div class="m-ss-lbl">Goals</div></div>
+            <div class="m-ss"><div class="m-ss-val">${(l.assists_p90||0).toFixed(2)}</div><div class="m-ss-lbl">Assists</div></div>
+            <div class="m-ss"><div class="m-ss-val" style="color:var(--ink4)">${(l.prog_pass_p90||0).toFixed(1)}</div><div class="m-ss-lbl">Prog pass <span style="font-size:8px;background:rgba(0,0,0,0.06);border-radius:3px;padding:1px 4px">pend.</span></div></div>
+            <div class="m-ss"><div class="m-ss-val">${(l.tackles_p90||0).toFixed(2)}</div><div class="m-ss-lbl">Tackles</div></div>
+          </div>
+          ${l.avg_player_rating!=null?`<div class="m-avg-badge"><span class="m-avg-val">${l.avg_player_rating}</span><span class="m-avg-lbl">Avg player rating</span></div>`:''}
+        </div>
+        <div class="m-cb-sec"><div class="m-cb-lbl">Squad split · ${l.players_total||0} players</div>
+          <div class="m-pos-bar"><div style="height:7px;width:${l.att_pct}%;background:${PA}"></div><div style="width:1px;height:7px;background:#fff"></div><div style="height:7px;width:${l.mid_pct}%;background:${PM}"></div><div style="width:1px;height:7px;background:#fff"></div><div style="height:7px;flex:1;background:${PD}"></div></div>
+          ${[{lb:'Attack',n:aN,p:l.att_pct,c:PA},{lb:'Midfield',n:mN,p:l.mid_pct,c:PM},{lb:'Def / GK',n:dN,p:l.def_pct,c:PD}].map(x=>`<div class="m-pos-row"><span class="m-pos-dot" style="background:${x.c}"></span><span class="m-pos-lbl">${x.lb}</span><div class="m-pos-track"><div class="m-pos-fill" style="width:${Math.round(x.n/mx*100)}%;background:${x.c}"></div></div><span class="m-pos-n">${x.n}</span><span class="m-pos-pct">${x.p}%</span></div>`).join('')}
+        </div>
+        <div class="m-cb-sec"><div class="m-cb-lbl">About</div><p class="m-summary">${autoSummary(l)}</p></div>
+        <div class="m-cb-sec"><div class="m-cb-lbl">Players · ${ps.length} listed · top G+A highlighted</div>
+          <div style="display:grid;grid-template-columns:1fr 36px 36px 36px 48px;gap:0 6px;padding:0 0 6px;border-bottom:1px solid var(--border2)">
+            <div style="font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em">Player</div>
+            <div style="font-size:9px;font-weight:700;color:var(--ink4);text-align:right;text-transform:uppercase">G</div>
+            <div style="font-size:9px;font-weight:700;color:var(--ink4);text-align:right;text-transform:uppercase">A</div>
+            <div style="font-size:9px;font-weight:700;color:var(--ink4);text-align:right;text-transform:uppercase">G+A</div>
+            <div style="font-size:9px;font-weight:700;color:var(--ink4);text-align:right;text-transform:uppercase">Mins</div>
+          </div>
+          <div>${playerRows}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Per-90 tab ─────────────────────────────────────────────────────────────
+const METRICS=[
+  {k:'goals_p90',lb:'Goals / 90',f:v=>v.toFixed(2)},
+  {k:'assists_p90',lb:'Assists / 90',f:v=>v.toFixed(2)},
+  {k:'prog_pass_p90',lb:'Prog passes / 90',f:v=>v.toFixed(1),pending:true},
+  {k:'duels_won_p90',lb:'Duels won / 90',f:v=>v.toFixed(1),pending:true},
+  {k:'tackles_p90',lb:'Tackles / 90',f:v=>v.toFixed(2)},
+  {k:'pressures_p90',lb:'Pressures / 90',f:v=>v.toFixed(1),pending:true},
+  {k:'interceptions_p90',lb:'Interceptions / 90',f:v=>v.toFixed(2)},
+];
+function rP90(){
+  const s=manifest?.snapshots?.find(x=>x.id===currentId);
+  const dt=s?.date||'';
+  document.getElementById('m-p90-notice').textContent=
+    snap?.view==='isolated'?`${snap.phase} (${dt}) only.`:
+    s?.ko?`Cumulative to ${snap?.phase}. Eliminated dimmed.`:
+    `Cumulative to ${s?.label||''} · ${dt}.`;
+  document.getElementById('m-p90-grid').innerHTML=METRICS.map(m=>{
+    const sorted=[...allSt()].sort((a,b)=>(b[m.k]||0)-(a[m.k]||0));
+    const mx=sorted[0]?.[m.k]||1;
+    const pendingBadge=m.pending?` <span style="font-size:9px;font-weight:500;color:var(--ink4);background:rgba(0,0,0,0.06);border-radius:4px;padding:1px 5px">pending</span>`:'';
+    const pendingNote=m.pending?`<div style="font-size:10px;color:var(--ink4);font-style:italic;margin-bottom:6px">Data pending from FBref</div>`:'';
+    return`<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px">${m.lb}${pendingBadge}</div>${pendingNote}`+
+      sorted.map((l,i)=>`<div class="m-metric-item${l.eliminated?' elim':''}"><span class="m-metric-rank">${i+1}</span><span style="width:3px;height:12px;border-radius:2px;background:${l.eliminated?'#ccc':l.color};display:inline-block;flex-shrink:0"></span><span class="m-metric-lbl">${l.short||l.name.slice(0,5)}</span><div class="m-metric-track"><div class="m-metric-fill" style="width:${Math.round((l[m.k]||0)/mx*100)}%"></div></div><span class="m-metric-val">${m.f(l[m.k]||0)}</span></div>`).join('')+`</div>`;
+  }).join('');
+}
+
+// ── Movers tab ─────────────────────────────────────────────────────────────
+function rMovers(){
+  if(!prevSnap){document.getElementById('m-mv-list').innerHTML=`<p style="font-size:12px;color:var(--ink3);padding:12px 0">No previous snapshot to compare.</p>`;return;}
+  const cur=allSt(),prv=prevSnap.leagues||[];
+  const pl=prevSnap.phase||'previous';
+  document.getElementById('m-mv-list').innerHTML=
+    `<div style="font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">vs. ${pl}</div>`+
+    cur.map((l,i)=>{
+      const pi=prv.findIndex(x=>x.id===l.id);
+      const d=pi>=0?pi+1-(i+1):null;
+      let arr=`<span style="color:var(--ink4);font-size:12px">—</span>`;
+      if(d!==null){if(d>0)arr=`<span style="color:#3CAC3B;font-size:12px;font-weight:700">▲${d}</span>`;else if(d<0)arr=`<span style="color:#C4291C;font-size:12px;font-weight:700">▼${Math.abs(d)}</span>`;}
+      return`<div class="m-mv-row${l.eliminated?' elim':''}">
+        <span style="font-size:14px;font-weight:700;color:var(--ink4);width:22px;text-align:center">${i+1}</span>
+        <span style="width:3px;height:20px;border-radius:2px;background:${l.eliminated?'#ccc':l.color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:13px;font-weight:600;color:var(--ink2);flex:1">${l.name}${l.eliminated?`<span class="m-elim-tag">out</span>`:''}</span>
+        ${pi<0?`<span style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.05em">New</span>`:arr}
+        <span style="font-size:12px;font-weight:600;color:var(--ink3);min-width:42px;text-align:right;font-variant-numeric:tabular-nums">${l.composite_score}</span></div>`;
+    }).join('');
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function tCard(id){const b=document.getElementById('mcb-'+id),c=document.getElementById('mcc-'+id);b.classList.toggle('open');c.classList.toggle('open');}
+function toggleNav(){navOpen=!navOpen;document.getElementById('m-nav-dd').classList.toggle('open',navOpen);document.getElementById('m-nav-chev').classList.toggle('open',navOpen);}
+const TAB_LABELS={rankings:'Rankings',per90:'Per-90 by metric',movers:'Movers'};
+function setTab(t,el){activeTab=t;document.querySelectorAll('.m-nav-item').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('m-nav-active').textContent=TAB_LABELS[t];['rankings','per90','movers'].forEach(id=>{document.getElementById('t-'+id).style.display=id===t?'':'none';});navOpen=false;document.getElementById('m-nav-dd').classList.remove('open');document.getElementById('m-nav-chev').classList.remove('open');}
+function setView(v,el){vm=v;document.querySelectorAll('.m-vt-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');if(currentId)loadSnap(currentId);}
+function snap(id){loadSnap(id);}
+function render(){rTL();rStats();rCards();rP90();rMovers();}
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+async function init(){
+  await loadManifest();
+  if(!manifest){document.getElementById('m-cards').innerHTML=`<p style="padding:16px;font-size:13px;color:var(--ink3)">No data yet — run the pipeline to generate snapshots.</p>`;return;}
+  rTL();
+  const latest=manifest.current_snapshot||manifest.snapshots[manifest.snapshots.length-1]?.id;
+  if(latest)await loadSnap(latest);
+}
+init();
+</script>
+</body>
+</html>
