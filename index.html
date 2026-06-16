@@ -23,7 +23,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .wm-icon{width:32px;height:32px;border-radius:8px;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .wm-main{font-size:22px;font-weight:700;color:#fff;letter-spacing:-0.3px;line-height:1}
 .wm-sub{font-size:9px;font-weight:600;color:rgba(209,212,209,0.75);letter-spacing:.13em;text-transform:uppercase;margin-top:2px}
-.tagline{font-size:11px;color:rgba(209,212,209,0.45);font-weight:300;margin-bottom:18px;padding-left:42px}
+.tagline{font-size:15px;color:rgba(255,255,255,0.88);font-weight:500;margin-bottom:18px;padding-left:42px;letter-spacing:.01em}
 .timeline-track{display:flex;gap:3px;overflow-x:auto;padding-bottom:18px}
 .timeline-track::-webkit-scrollbar{height:2px}
 .timeline-track::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
@@ -570,7 +570,8 @@ function mgrid(stats,ff){
     const excl=ff?stats.filter(l=>!ff(l)):[];
     const xr=excl.map(l=>`<div class="mri"><span class="mri-rank" style="color:var(--ink4)">—</span><span class="rk-stripe" style="background:${l.color};opacity:.2;height:12px"></span><span class="mri-name" style="color:var(--ink4)">${l.short||l.name.slice(0,4)}</span><div class="mri-bar-track"></div><span class="mri-excl">&lt;90m</span></div>`).join('');
     const pendingNote=m.pending?`<div class="mb-pending">Data pending from FBref</div>`:'';
-    return`<div><div class="mb-title">${m.lb}${m.pending?' <span class="mb-pending-badge">pending</span>':''}</div>${pendingNote}${rows}${xr}</div>`;
+    if(m.pending)return'';
+    return`<div><div class="mb-title">${m.lb}</div>${rows}${xr}</div>`;
   }).join('')+`</div>`;
 }
 function rP90(){
