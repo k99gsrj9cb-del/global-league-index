@@ -184,6 +184,19 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .fn-t a{color:var(--red);text-decoration:none}
 .fn-div{height:1px;background:var(--border);margin:10px 0}
 .sim{font-size:10px;color:var(--ink3);background:rgba(196,41,28,0.07);border:1px solid rgba(196,41,28,0.18);border-radius:8px;padding:8px 12px;margin-bottom:14px;line-height:1.6}
+.hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:4px}
+.hl-chart{background:var(--surface2);border-radius:12px;padding:16px;border:1px solid var(--border)}
+.hl-title{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;text-align:center}
+.hl-total{font-size:22px;font-weight:700;color:var(--navy);text-align:center;line-height:1;margin-bottom:2px}
+.hl-total-label{font-size:9px;color:var(--ink4);text-align:center;margin-bottom:12px}
+.hl-svg{display:block;margin:0 auto 12px}
+.hl-legend{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.hl-leg-row{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ink2)}
+.hl-leg-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.hl-leg-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hl-leg-val{font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;margin-left:auto}
+.hl-leg-pct{color:var(--ink4);min-width:32px;text-align:right}
+@media(max-width:500px){.hl-grid{grid-template-columns:1fr}}
 .share-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--ink3);cursor:pointer;transition:background .15s,color .15s}
 .share-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
 .share-btn:active{opacity:.75}
@@ -227,6 +240,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
     <button class="tab" onclick="setTab('squads',this)">Squad makeup</button>
     <button class="tab" onclick="setTab('per90',this)">Per-90</button>
     <button class="tab" onclick="setTab('avgplayer',this)">Avg player</button>
+    <button class="tab" onclick="setTab('headline',this)">Headline stats</button>
     <button class="tab" onclick="setTab('movers',this)">Movers</button>
   </div></div>
   <div id="t-rankings">
@@ -261,6 +275,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
     <div id="p90-gk-grid"></div>
   </div>
   <div id="t-avgplayer" style="display:none"><div class="notice">Leagues ranked by average player composite score per 90 minutes. Excludes eliminated leagues and those where fewer eligible players have played. † = fewer than 5 eligible players (treat with caution).</div><div id="avg-grid"></div></div>
+  <div id="t-headline" style="display:none"><div id="hl-grid"></div></div>
   <div id="t-movers" style="display:none"><div id="mv-list"></div></div>
   <div class="fn-wrap">
     <div class="fn-head">Notes &amp; sources</div>
@@ -658,7 +673,7 @@ function rMovers(){
 
 // ── Shared UI helpers ──────────────────────────────────────────────────────
 function tPro(id){const b=document.getElementById('lpb-'+id),c=document.getElementById('chev-'+id);b.classList.toggle('open');c.classList.toggle('open');}
-function setTab(t,el){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');['rankings','profiles','squads','per90','avgplayer','movers'].forEach(id=>{document.getElementById('t-'+id).style.display=id===t?'':'none';});}
+function setTab(t,el){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');['rankings','profiles','squads','per90','avgplayer','headline','movers'].forEach(id=>{document.getElementById('t-'+id).style.display=id===t?'':'none';});}
 function goProfile(lid){
   // Switch to profiles tab
   const tabEl=document.querySelector('.tab:nth-child(2)');
@@ -674,7 +689,7 @@ function setView(v,el){vm=v;document.querySelectorAll('.vt-btn').forEach(b=>b.cl
 function goSnap(id){loadSnap(id);}
 
 // ── Render ─────────────────────────────────────────────────────────────────
-function render(){rTL();rCtx();rStats();rRankings();rProfiles();rSquads();rP90();rAvg();rMovers();}
+function render(){rTL();rCtx();rStats();rRankings();rProfiles();rSquads();rP90();rAvg();rHeadline();rMovers();}
 
 // ── Boot ───────────────────────────────────────────────────────────────────
 async function init(){
@@ -687,6 +702,71 @@ async function init(){
   const latest=manifest.current_snapshot||manifest.snapshots[manifest.snapshots.length-1]?.id;
   if(latest)await loadSnap(latest);
 }
+// ── Headline stats ─────────────────────────────────────────────────────────
+function pieSlices(data){
+  // data: [{color, value}]
+  const total=data.reduce((s,d)=>s+d.value,0);
+  if(!total)return[];
+  let angle=-Math.PI/2;
+  return data.map(d=>{
+    const sweep=2*Math.PI*(d.value/total);
+    const start=angle;
+    angle+=sweep;
+    return{...d,start,sweep,total};
+  });
+}
+function arcPath(cx,cy,r,start,sweep){
+  if(sweep>=2*Math.PI*0.9999)sweep=2*Math.PI*0.9999;
+  const x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start);
+  const x2=cx+r*Math.cos(start+sweep),y2=cy+r*Math.sin(start+sweep);
+  const large=sweep>Math.PI?1:0;
+  return`M${cx},${cy} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2} Z`;
+}
+function pieChart(id,title,data,total,unit=''){
+  const R=80,cx=90,cy=90,size=180;
+  const slices=pieSlices(data);
+  const paths=slices.map(s=>`<path d="${arcPath(cx,cy,R,s.start,s.sweep)}" fill="${s.color}" stroke="#fff" stroke-width="1.5"><title>${s.name}: ${s.value}</title></path>`).join('');
+  // donut hole
+  const legend=data.slice().sort((a,b)=>b.value-a.value).map(d=>{
+    const pct=total?Math.round(d.value/total*100):0;
+    if(!d.value)return'';
+    return`<div class="hl-leg-row"><span class="hl-leg-swatch" style="background:${d.color}"></span><span class="hl-leg-name">${d.name}</span><span class="hl-leg-val">${d.value}${unit}</span><span class="hl-leg-pct">${pct}%</span></div>`;
+  }).join('');
+  return`<div class="hl-chart" id="${id}">
+    <div class="hl-title">${title}</div>
+    <div class="hl-total">${total}${unit}</div>
+    <div class="hl-total-label">total</div>
+    <svg class="hl-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      ${paths}
+      <circle cx="${cx}" cy="${cy}" r="38" fill="var(--surface2)"/>
+    </svg>
+    <div class="hl-legend">${legend}</div>
+    <div class="share-row" style="margin-top:10px"><button class="share-btn" style="padding:4px 8px;font-size:10px" onclick="shareSection('${id}','GLI · ${title} · World Cup 2026')">${SHARE_ICON}Share</button></div>
+  </div>`;
+}
+function rHeadline(){
+  const leagues=allSt();
+  if(!leagues.length){document.getElementById('hl-grid').innerHTML='';return;}
+  const charts=[
+    {id:'hl-eligible',title:'Players with 60+ minutes',key:'players_eligible'},
+    {id:'hl-goals',   title:'Total goals',             key:'goals_total'},
+    {id:'hl-assists', title:'Total assists',            key:'assists_total'},
+    {id:'hl-ga',      title:'Total goals & assists',   key:'ga_total'},
+  ];
+  // compute goals_total, assists_total, ga_total from player data
+  leagues.forEach(l=>{
+    const ps=l.players||[];
+    l.goals_total=ps.reduce((s,p)=>s+p.goals,0);
+    l.assists_total=ps.reduce((s,p)=>s+p.assists,0);
+    l.ga_total=l.goals_total+l.assists_total;
+  });
+  document.getElementById('hl-grid').innerHTML=`<div class="hl-grid">`+charts.map(c=>{
+    const data=leagues.map(l=>({name:l.short||l.name,color:l.color||'#ccc',value:l[c.key]||0})).filter(d=>d.value>0);
+    const total=data.reduce((s,d)=>s+d.value,0);
+    return pieChart(c.id,c.title,data,total);
+  }).join('')+`</div>`;
+}
+
 init();
 
 // ── Share ──────────────────────────────────────────────────────────────────
