@@ -184,18 +184,19 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
 .fn-t a{color:var(--red);text-decoration:none}
 .fn-div{height:1px;background:var(--border);margin:10px 0}
 .sim{font-size:10px;color:var(--ink3);background:rgba(196,41,28,0.07);border:1px solid rgba(196,41,28,0.18);border-radius:8px;padding:8px 12px;margin-bottom:14px;line-height:1.6}
-.hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:4px}
+.hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:4px}
 .hl-chart{background:var(--surface2);border-radius:12px;padding:16px;border:1px solid var(--border)}
-.hl-title{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;text-align:center}
-.hl-total{font-size:22px;font-weight:700;color:var(--navy);text-align:center;line-height:1;margin-bottom:2px}
-.hl-total-label{font-size:9px;color:var(--ink4);text-align:center;margin-bottom:12px}
-.hl-svg{display:block;margin:0 auto 12px}
-.hl-legend{display:flex;flex-direction:column;gap:4px;margin-top:8px}
-.hl-leg-row{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ink2)}
-.hl-leg-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.hl-leg-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hl-leg-val{font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;margin-left:auto}
-.hl-leg-pct{color:var(--ink4);min-width:32px;text-align:right}
+.hl-title{font-size:11px;font-weight:700;color:var(--ink2);margin-bottom:4px}
+.hl-icon{font-size:22px;margin-bottom:6px}
+.hl-total{font-size:26px;font-weight:800;color:var(--navy);line-height:1}
+.hl-total-label{font-size:9px;color:var(--ink4);margin-bottom:14px}
+.hl-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.hl-bar-label{font-size:10px;font-weight:600;color:var(--ink3);width:34px;flex-shrink:0;text-align:right}
+.hl-bar-track{flex:1;height:14px;background:var(--surface3);border-radius:4px;overflow:hidden;position:relative}
+.hl-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.hl-bar-val{display:flex;flex-direction:column;align-items:flex-end;width:40px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.hl-bar-num{font-size:11px;font-weight:700;color:var(--ink2);line-height:1.1}
+.hl-bar-pct{font-size:9px;font-weight:400;color:var(--ink4);line-height:1.1}
 @media(max-width:500px){.hl-grid{grid-template-columns:1fr}}
 .share-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--ink3);cursor:pointer;transition:background .15s,color .15s}
 .share-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
@@ -703,57 +704,43 @@ async function init(){
   if(latest)await loadSnap(latest);
 }
 // ── Headline stats ─────────────────────────────────────────────────────────
-function pieSlices(data){
-  // data: [{color, value}]
-  const total=data.reduce((s,d)=>s+d.value,0);
-  if(!total)return[];
-  let angle=-Math.PI/2;
-  return data.map(d=>{
-    const sweep=2*Math.PI*(d.value/total);
-    const start=angle;
-    angle+=sweep;
-    return{...d,start,sweep,total};
-  });
-}
-function arcPath(cx,cy,r,start,sweep){
-  if(sweep>=2*Math.PI*0.9999)sweep=2*Math.PI*0.9999;
-  const x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start);
-  const x2=cx+r*Math.cos(start+sweep),y2=cy+r*Math.sin(start+sweep);
-  const large=sweep>Math.PI?1:0;
-  return`M${cx},${cy} L${x1},${y1} A${r},${r},0,${large},1,${x2},${y2} Z`;
-}
-function pieChart(id,title,data,total,unit=''){
-  const R=80,cx=90,cy=90,size=180;
-  const slices=pieSlices(data);
-  const paths=slices.map(s=>`<path d="${arcPath(cx,cy,R,s.start,s.sweep)}" fill="${s.color}" stroke="#fff" stroke-width="1.5"><title>${s.name}: ${s.value}</title></path>`).join('');
-  // donut hole
-  const legend=data.slice().sort((a,b)=>b.value-a.value).map(d=>{
-    const pct=total?Math.round(d.value/total*100):0;
-    if(!d.value)return'';
-    return`<div class="hl-leg-row"><span class="hl-leg-swatch" style="background:${d.color}"></span><span class="hl-leg-name">${d.name}</span><span class="hl-leg-val">${d.value}${unit}</span><span class="hl-leg-pct">${pct}%</span></div>`;
+
+
+function hlBarChart(id,title,data,total){
+  const sorted=[...data].sort((a,b)=>b.value-a.value);
+  const mx=sorted[0]?.value||1;
+  const rows=sorted.map(d=>{
+    const barPct=Math.round(d.value/mx*100);
+    const sharePct=total?Math.round(d.value/total*100):0;
+    return`<div class="hl-bar-row">
+      <span class="hl-bar-label">${d.name}</span>
+      <div class="hl-bar-track"><div class="hl-bar-fill" style="width:${barPct}%;background:${d.color}"></div></div>
+      <span class="hl-bar-val"><span class="hl-bar-num">${d.value}</span><span class="hl-bar-pct">${sharePct}%</span></span>
+    </div>`;
   }).join('');
   return`<div class="hl-chart" id="${id}">
-    <div class="hl-title">${title}</div>
-    <div class="hl-total">${total}${unit}</div>
-    <div class="hl-total-label">total</div>
-    <svg class="hl-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-      ${paths}
-      <circle cx="${cx}" cy="${cy}" r="38" fill="var(--surface2)"/>
-    </svg>
-    <div class="hl-legend">${legend}</div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div class="hl-title">${title}</div>
+        <div class="hl-total">${total}</div>
+        <div class="hl-total-label">total across all leagues</div>
+      </div>
+    </div>
+    ${rows}
     <div class="share-row" style="margin-top:10px"><button class="share-btn" style="padding:4px 8px;font-size:10px" onclick="shareSection('${id}','GLI · ${title} · World Cup 2026')">${SHARE_ICON}Share</button></div>
   </div>`;
 }
+
+
 function rHeadline(){
   const leagues=allSt();
   if(!leagues.length){document.getElementById('hl-grid').innerHTML='';return;}
   const charts=[
-    {id:'hl-eligible',title:'Players with 60+ minutes',key:'players_eligible'},
-    {id:'hl-goals',   title:'Total goals',             key:'goals_total'},
-    {id:'hl-assists', title:'Total assists',            key:'assists_total'},
-    {id:'hl-ga',      title:'Total goals & assists',   key:'ga_total'},
+    {id:'hl-eligible',title:'Players · 60+ minutes', icon:'player', key:'players_eligible'},
+    {id:'hl-goals',   title:'Total goals',           icon:'goal',   key:'goals_total'},
+    {id:'hl-assists', title:'Total assists',          icon:'assist', key:'assists_total'},
+    {id:'hl-ga',      title:'Goals & assists',        icon:'ga',     key:'ga_total'},
   ];
-  // compute goals_total, assists_total, ga_total from player data
   leagues.forEach(l=>{
     const ps=l.players||[];
     l.goals_total=ps.reduce((s,p)=>s+p.goals,0);
@@ -763,7 +750,7 @@ function rHeadline(){
   document.getElementById('hl-grid').innerHTML=`<div class="hl-grid">`+charts.map(c=>{
     const data=leagues.map(l=>({name:l.short||l.name,color:l.color||'#ccc',value:l[c.key]||0})).filter(d=>d.value>0);
     const total=data.reduce((s,d)=>s+d.value,0);
-    return pieChart(c.id,c.title,data,total);
+    return hlBarChart(c.id,c.title,data,total);
   }).join('')+`</div>`;
 }
 
