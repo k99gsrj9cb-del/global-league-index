@@ -409,9 +409,10 @@ def main():
         raw_path = BASE / "data" / "players" / "wc2026_raw.json"
         try:
             fetched_at = json.loads(raw_path.read_text())["fetched_at"]
-            fetch_date = fetched_at[:10]  # "2026-06-16T23:45:00Z" → "2026-06-16"
-            today = fetch_date
-            print(f"  Using fetch date from wc2026_raw.json: {today}")
+            fetch_date = date.fromisoformat(fetched_at[:10])
+            # FBref data always reflects the previous day's matches
+            today = (fetch_date - __import__('datetime').timedelta(days=1)).isoformat()
+            print(f"  Fetch date: {fetch_date} → allocating to previous day: {today}")
         except Exception:
             today = date.today().isoformat()
             print(f"  Could not read fetch date — using today: {today}")
