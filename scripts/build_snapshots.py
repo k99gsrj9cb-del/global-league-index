@@ -399,9 +399,22 @@ def main():
         if len(unmapped) > 20:
             print(f"  ... and {len(unmapped)-20} more. Run scripts/check_clubs.py for full list.")
 
-    today = args.as_of if args.as_of else date.today().isoformat()
     if args.as_of:
-        print(f"  ⚠ Running with --as-of {today} (overriding today's date)")
+        today = args.as_of
+        print(f"  ⚠ Running with --as-of {today} (manual override)")
+    else:
+        # Use the date the FBref data was fetched, not today's clock date.
+        # This handles the case where FBref updates late and you run the
+        # pipeline after midnight — the data still belongs to the previous day.
+        raw_path = BASE / "data" / "players" / "wc2026_raw.json"
+        try:
+            fetched_at = json.loads(raw_path.read_text())["fetched_at"]
+            fetch_date = fetched_at[:10]  # "2026-06-16T23:45:00Z" → "2026-06-16"
+            today = fetch_date
+            print(f"  Using fetch date from wc2026_raw.json: {today}")
+        except Exception:
+            today = date.today().isoformat()
+            print(f"  Could not read fetch date — using today: {today}")
     previous_id = None
     built = 0
 
