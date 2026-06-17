@@ -427,6 +427,12 @@ def main():
         if day["date"] > today:
             print(f"  Skipping {sid} (future: {day['date']})")
             continue
+        out_path = SNAPS / f"{sid}.json"
+        if out_path.exists() and not args.snapshot:
+            print(f"  Frozen  {sid} (already built — use --snapshot {sid} to rebuild)")
+            previous_id = sid
+            built += 1
+            continue
 
         snap = build_snapshot(
             snap_id=sid,
