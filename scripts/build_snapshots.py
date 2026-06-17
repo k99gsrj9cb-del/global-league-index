@@ -377,6 +377,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--snapshot", help="Build only this snapshot_id")
     parser.add_argument("--validate", action="store_true", help="Validate existing snapshots")
+    parser.add_argument("--as-of", dest="as_of", help="Treat today as this date (YYYY-MM-DD). Use if running after midnight for previous day's data.")
     args = parser.parse_args()
 
     players = load_players()
@@ -398,7 +399,9 @@ def main():
         if len(unmapped) > 20:
             print(f"  ... and {len(unmapped)-20} more. Run scripts/check_clubs.py for full list.")
 
-    today = date.today().isoformat()
+    today = args.as_of if args.as_of else date.today().isoformat()
+    if args.as_of:
+        print(f"  ⚠ Running with --as-of {today} (overriding today's date)")
     previous_id = None
     built = 0
 

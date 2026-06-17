@@ -50,6 +50,12 @@ python3 scripts/update_manifest.py
 
 You should see "Updated manifest: current_snapshot = group_dX" at the end.
 
+> **Running after midnight?** If FBref updated late and you're running after midnight, the script will try to build the next day's snapshot. To force it to build the correct day, use:
+> ```
+> python3 scripts/build_snapshots.py --as-of 2026-06-16
+> ```
+> Replace the date with the actual match day you're updating for.
+
 ---
 
 ## Step 3 — Check for new clubs
