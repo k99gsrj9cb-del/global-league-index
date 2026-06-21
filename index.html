@@ -242,6 +242,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
     <button class="tab" onclick="setTab('per90',this)">Per-90</button>
     <button class="tab" onclick="setTab('avgplayer',this)">Avg player</button>
     <button class="tab" onclick="setTab('headline',this)">Headline stats</button>
+    <button class="tab" onclick="setTab('headline2',this)">Headline stats v2</button>
     <button class="tab" onclick="setTab('movers',this)">Movers</button>
   </div></div>
   <div id="t-rankings">
@@ -277,6 +278,7 @@ body{font-family:var(--font);color:var(--ink2);background:#f0f2f7;min-height:100
   </div>
   <div id="t-avgplayer" style="display:none"><div class="notice">Leagues ranked by average player composite score per 90 minutes. Excludes eliminated leagues and those where fewer eligible players have played. † = fewer than 5 eligible players (treat with caution).</div><div id="avg-grid"></div></div>
   <div id="t-headline" style="display:none"><div id="hl-grid"></div></div>
+  <div id="t-headline2" style="display:none"><div id="hl2-grid"></div></div>
   <div id="t-movers" style="display:none"><div id="mv-list"></div></div>
   <div class="fn-wrap">
     <div class="fn-head">Notes &amp; sources</div>
@@ -306,7 +308,8 @@ const POS_COL={ATT:PA,MID:PM,DEF:PD,GK:'#888'};
 const POS_BG={ATT:'rgba(235,80,39,0.11)',MID:'rgba(57,76,243,0.11)',DEF:'rgba(60,172,59,0.11)',GK:'rgba(136,136,136,0.11)'};
 
 // ── Data helpers ───────────────────────────────────────────────────────────
-function allSt(){return snap?.leagues||[];}
+function allSt(){return (snap?.leagues||[]).filter(l=>l.id!=='other');}
+function allStAll(){return snap?.leagues||[];}
 function prank(id){const i=prevSnap?.leagues?.findIndex(l=>l.id===id);return(i!=null&&i>=0)?i+1:null;}
 function snapFileId(baseId,view){
   const m=manifest?.snapshots?.find(s=>s.id===baseId);
@@ -674,7 +677,7 @@ function rMovers(){
 
 // ── Shared UI helpers ──────────────────────────────────────────────────────
 function tPro(id){const b=document.getElementById('lpb-'+id),c=document.getElementById('chev-'+id);b.classList.toggle('open');c.classList.toggle('open');}
-function setTab(t,el){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');['rankings','profiles','squads','per90','avgplayer','headline','movers'].forEach(id=>{document.getElementById('t-'+id).style.display=id===t?'':'none';});}
+function setTab(t,el){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));el.classList.add('active');['rankings','profiles','squads','per90','avgplayer','headline','headline2','movers'].forEach(id=>{document.getElementById('t-'+id).style.display=id===t?'':'none';});}
 function goProfile(lid){
   // Switch to profiles tab
   const tabEl=document.querySelector('.tab:nth-child(2)');
@@ -690,7 +693,7 @@ function setView(v,el){vm=v;document.querySelectorAll('.vt-btn').forEach(b=>b.cl
 function goSnap(id){loadSnap(id);}
 
 // ── Render ─────────────────────────────────────────────────────────────────
-function render(){rTL();rCtx();rStats();rRankings();rProfiles();rSquads();rP90();rAvg();rHeadline();rMovers();}
+function render(){rTL();rCtx();rStats();rRankings();rProfiles();rSquads();rP90();rAvg();rHeadline();rHeadline2();rMovers();}
 
 // ── Boot ───────────────────────────────────────────────────────────────────
 async function init(){
@@ -733,7 +736,7 @@ function hlBarChart(id,title,data,total){
 
 
 function rHeadline(){
-  const leagues=allSt();
+  const leagues=allStAll();
   if(!leagues.length){document.getElementById('hl-grid').innerHTML='';return;}
   const charts=[
     {id:'hl-eligible',title:'Players · 60+ minutes', icon:'player', key:'players_eligible'},
@@ -748,6 +751,28 @@ function rHeadline(){
     l.ga_total=l.goals_total+l.assists_total;
   });
   document.getElementById('hl-grid').innerHTML=`<div class="hl-grid">`+charts.map(c=>{
+    const data=leagues.map(l=>({name:l.short||l.name,color:l.color||'#ccc',value:l[c.key]||0})).filter(d=>d.value>0);
+    const total=data.reduce((s,d)=>s+d.value,0);
+    return hlBarChart(c.id,c.title,data,total);
+  }).join('')+`</div>`;
+}
+
+function rHeadline2(){
+  const leagues=allStAll();
+  if(!leagues.length){document.getElementById('hl2-grid').innerHTML='';return;}
+  const charts=[
+    {id:'hl2-eligible',title:'Players · all', icon:'player', key:'players_total'},
+    {id:'hl2-goals',   title:'Total goals',           icon:'goal',   key:'goals_total'},
+    {id:'hl2-assists', title:'Total assists',          icon:'assist', key:'assists_total'},
+    {id:'hl2-ga',      title:'Goals & assists',        icon:'ga',     key:'ga_total'},
+  ];
+  leagues.forEach(l=>{
+    const ps=l.players||[];
+    l.goals_total=ps.reduce((s,p)=>s+p.goals,0);
+    l.assists_total=ps.reduce((s,p)=>s+p.assists,0);
+    l.ga_total=l.goals_total+l.assists_total;
+  });
+  document.getElementById('hl2-grid').innerHTML=`<div class="hl-grid">`+charts.map(c=>{
     const data=leagues.map(l=>({name:l.short||l.name,color:l.color||'#ccc',value:l[c.key]||0})).filter(d=>d.value>0);
     const total=data.reduce((s,d)=>s+d.value,0);
     return hlBarChart(c.id,c.title,data,total);

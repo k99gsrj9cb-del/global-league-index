@@ -173,7 +173,9 @@ def load_schedule() -> dict:
 
 def assign_league(player: dict, lookup: dict) -> str | None:
     club = player.get("club") or player.get("squad", "")
-    return lookup.get(club)  # None = not tracked
+    if club in lookup:
+        return lookup[club] or "other"  # known but untracked league → "other"
+    return None  # club missing from lookup entirely
 
 
 def aggregate_leagues(players: list[dict], lookup: dict, eliminated: set[str]) -> list[dict]:
