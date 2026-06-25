@@ -1,146 +1,55 @@
 {
-  "current_snapshot": "group_d10",
-  "first_available": "group_d5",
-  "generated_at": "2026-06-21T17:50:43.497082Z",
+  "current_snapshot": "group_game1",
+  "first_available": "group_game1",
+  "generated_at": "2026-06-24T00:00:00.000000Z",
   "snapshots": [
     {
-      "id": "group_d1",
-      "label": "D1",
+      "id": "group_game1",
+      "label": "Game 1",
       "phase": "Group stage",
-      "date": "Jun 11",
+      "date": "Jun 11–17",
       "ko": false
     },
     {
-      "id": "group_d2",
-      "label": "D2",
+      "id": "group_game2",
+      "label": "Game 2",
       "phase": "Group stage",
-      "date": "Jun 12",
+      "date": "Jun 18–23",
       "ko": false
     },
     {
-      "id": "group_d3",
-      "label": "D3",
+      "id": "group_game3",
+      "label": "Game 3",
       "phase": "Group stage",
-      "date": "Jun 13",
-      "ko": false
-    },
-    {
-      "id": "group_d4",
-      "label": "D4",
-      "phase": "Group stage",
-      "date": "Jun 14",
-      "ko": false
-    },
-    {
-      "id": "group_d5",
-      "label": "D5",
-      "phase": "Group stage",
-      "date": "Jun 15",
-      "ko": false
-    },
-    {
-      "id": "group_d6",
-      "label": "D6",
-      "phase": "Group stage",
-      "date": "Jun 16",
-      "ko": false
-    },
-    {
-      "id": "group_d7",
-      "label": "D7",
-      "phase": "Group stage",
-      "date": "Jun 17",
-      "ko": false
-    },
-    {
-      "id": "group_d8",
-      "label": "D8",
-      "phase": "Group stage",
-      "date": "Jun 18",
-      "ko": false
-    },
-    {
-      "id": "group_d9",
-      "label": "D9",
-      "phase": "Group stage",
-      "date": "Jun 19",
-      "ko": false
-    },
-    {
-      "id": "group_d10",
-      "label": "D10",
-      "phase": "Group stage",
-      "date": "Jun 20",
-      "ko": false
-    },
-    {
-      "id": "group_d11",
-      "label": "D11",
-      "phase": "Group stage",
-      "date": "Jun 21",
-      "ko": false
-    },
-    {
-      "id": "group_d12",
-      "label": "D12",
-      "phase": "Group stage",
-      "date": "Jun 22",
-      "ko": false
-    },
-    {
-      "id": "group_d13",
-      "label": "D13",
-      "phase": "Group stage",
-      "date": "Jun 23",
-      "ko": false
-    },
-    {
-      "id": "group_d14",
-      "label": "D14",
-      "phase": "Group stage",
-      "date": "Jun 24",
-      "ko": false
-    },
-    {
-      "id": "group_d15",
-      "label": "D15",
-      "phase": "Group stage",
-      "date": "Jun 25",
-      "ko": false
-    },
-    {
-      "id": "group_d16",
-      "label": "D16",
-      "phase": "Group stage",
-      "date": "Jun 26",
+      "date": "Jun 24–26",
       "ko": false
     },
     {
       "id": "r32",
       "label": "R32",
       "phase": "Round of 32",
-      "date": "Jun 27\u2013Jul 3",
+      "date": "Jun 27–Jul 3",
       "ko": true
     },
     {
       "id": "r16",
       "label": "R16",
       "phase": "Round of 16",
-      "date": "Jul 4\u20137",
+      "date": "Jul 4–7",
       "ko": true
     },
     {
       "id": "qf",
       "label": "QF",
       "phase": "Quarter-finals",
-      "date": "Jul 9\u201312",
+      "date": "Jul 9–12",
       "ko": true
     },
     {
       "id": "sf",
       "label": "SF",
       "phase": "Semi-finals",
-      "date": "Jul 14\u201315",
+      "date": "Jul 14–15",
       "ko": true
     },
     {

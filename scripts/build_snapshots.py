@@ -7,12 +7,12 @@ Reads:  data/players/wc2026_raw.json
 Writes: data/snapshots/<snapshot_id>.json
 
 Run:    python scripts/build_snapshots.py
-        python scripts/build_snapshots.py --snapshot group_d3   (single snapshot)
+        python scripts/build_snapshots.py --snapshot group_game2   (single snapshot)
         python scripts/build_snapshots.py --validate            (validate only)
 """
 import json, sys, argparse
 from pathlib import Path
-from datetime import date, datetime
+from datetime import datetime
 
 BASE     = Path(__file__).parent.parent
 PLAYERS  = BASE / "data" / "players" / "wc2026_raw.json"
@@ -127,23 +127,10 @@ def load_lookup() -> dict[str, str | None]:
 
 DEFAULT_SCHEDULE = {
     "tournament": "2026 FIFA World Cup",
-    "group_stage_days": [
-        {"snapshot_id": "group_d1",  "label": "Day 1",  "date": "2026-06-11", "phase": "Group stage"},
-        {"snapshot_id": "group_d2",  "label": "Day 2",  "date": "2026-06-12", "phase": "Group stage"},
-        {"snapshot_id": "group_d3",  "label": "Day 3",  "date": "2026-06-13", "phase": "Group stage"},
-        {"snapshot_id": "group_d4",  "label": "Day 4",  "date": "2026-06-14", "phase": "Group stage"},
-        {"snapshot_id": "group_d5",  "label": "Day 5",  "date": "2026-06-15", "phase": "Group stage"},
-        {"snapshot_id": "group_d6",  "label": "Day 6",  "date": "2026-06-16", "phase": "Group stage"},
-        {"snapshot_id": "group_d7",  "label": "Day 7",  "date": "2026-06-17", "phase": "Group stage"},
-        {"snapshot_id": "group_d8",  "label": "Day 8",  "date": "2026-06-18", "phase": "Group stage"},
-        {"snapshot_id": "group_d9",  "label": "Day 9",  "date": "2026-06-19", "phase": "Group stage"},
-        {"snapshot_id": "group_d10", "label": "Day 10", "date": "2026-06-20", "phase": "Group stage"},
-        {"snapshot_id": "group_d11", "label": "Day 11", "date": "2026-06-21", "phase": "Group stage"},
-        {"snapshot_id": "group_d12", "label": "Day 12", "date": "2026-06-22", "phase": "Group stage"},
-        {"snapshot_id": "group_d13", "label": "Day 13", "date": "2026-06-23", "phase": "Group stage"},
-        {"snapshot_id": "group_d14", "label": "Day 14", "date": "2026-06-24", "phase": "Group stage"},
-        {"snapshot_id": "group_d15", "label": "Day 15", "date": "2026-06-25", "phase": "Group stage"},
-        {"snapshot_id": "group_d16", "label": "Day 16", "date": "2026-06-26", "phase": "Group stage"},
+    "group_stage_games": [
+        {"snapshot_id": "group_game1", "label": "Game 1", "date": "Jun 11–17", "phase": "Group stage"},
+        {"snapshot_id": "group_game2", "label": "Game 2", "date": "Jun 18–23", "phase": "Group stage"},
+        {"snapshot_id": "group_game3", "label": "Game 3", "date": "Jun 24–26", "phase": "Group stage"},
     ],
     "knockout_rounds": [
         {"snapshot_id": "r32_cumulative",  "label": "R32",  "date_range": "Jun 27–Jul 3",  "phase": "Round of 32",   "view": "cumulative"},
@@ -379,7 +366,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--snapshot", help="Build only this snapshot_id")
     parser.add_argument("--validate", action="store_true", help="Validate existing snapshots")
-    parser.add_argument("--as-of", dest="as_of", help="Treat today as this date (YYYY-MM-DD). Use if running after midnight for previous day's data.")
     args = parser.parse_args()
 
     players = load_players()
@@ -401,45 +387,34 @@ def main():
         if len(unmapped) > 20:
             print(f"  ... and {len(unmapped)-20} more. Run scripts/check_clubs.py for full list.")
 
-    if args.as_of:
-        today = args.as_of
-        print(f"  ⚠ Running with --as-of {today} (manual override)")
-    else:
-        # Use the date the FBref data was fetched, not today's clock date.
-        # This handles the case where FBref updates late and you run the
-        # pipeline after midnight — the data still belongs to the previous day.
-        raw_path = BASE / "data" / "players" / "wc2026_raw.json"
-        try:
-            fetched_at = json.loads(raw_path.read_text())["fetched_at"]
-            fetch_date = date.fromisoformat(fetched_at[:10])
-            # FBref data always reflects the previous day's matches
-            today = (fetch_date - __import__('datetime').timedelta(days=1)).isoformat()
-            print(f"  Fetch date: {fetch_date} → allocating to previous day: {today}")
-        except Exception:
-            today = date.today().isoformat()
-            print(f"  Could not read fetch date — using today: {today}")
     previous_id = None
     built = 0
 
-    # Group stage — cumulative snapshots
-    for day in schedule["group_stage_days"]:
-        sid = day["snapshot_id"]
-        if args.snapshot and sid != args.snapshot:
-            continue
-        if day["date"] > today:
-            print(f"  Skipping {sid} (future: {day['date']})")
-            continue
+    # Group stage — one cumulative snapshot per completed round of group matches.
+    # Each game is built explicitly (no calendar auto-detection, since a "game"
+    # round doesn't map to a fixed date — it's whenever all teams finish that
+    # round). Without --snapshot, only the next unbuilt game in sequence is built.
+    for game in schedule["group_stage_games"]:
+        sid = game["snapshot_id"]
         out_path = SNAPS / f"{sid}.json"
-        if out_path.exists() and not args.snapshot:
-            print(f"  Frozen  {sid} (already built — use --snapshot {sid} to rebuild)")
-            previous_id = sid
-            built += 1
-            continue
+
+        if args.snapshot:
+            if sid != args.snapshot:
+                if out_path.exists():
+                    previous_id = sid
+                    built += 1
+                continue
+        else:
+            if out_path.exists():
+                print(f"  Frozen  {sid} (already built — use --snapshot {sid} to rebuild)")
+                previous_id = sid
+                built += 1
+                continue
 
         snap = build_snapshot(
             snap_id=sid,
-            phase=day["phase"],
-            date_str=day["date"],
+            phase=game["phase"],
+            date_str=game["date"],
             view="cumulative",
             players=players,
             lookup=lookup,
@@ -460,6 +435,9 @@ def main():
             previous_id = sid
         else:
             print(f"  ✗ {sid} BLOCKED by {len(errors)} error(s)")
+
+        if not args.snapshot:
+            break  # only build the next sequential game per run
 
     print(f"\nBuilt {built} snapshots → {SNAPS}")
 

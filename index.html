@@ -385,7 +385,7 @@ function rCtx(){
   document.getElementById('ctx-phase').textContent=snap.phase;
   const dt=m?.date||snap.date||'';
   document.getElementById('ctx-desc').textContent=
-    (snap.view==='isolated')?`${dt} · this round only`:`${dt} · cumulative from Day 1`;
+    (snap.view==='isolated')?`${dt} · this round only`:`${dt} · cumulative from Game 1`;
   // Show/hide view toggle for KO rounds only
   document.querySelector('.view-toggle').style.display=m?.ko?'':'none';
 }
@@ -633,8 +633,8 @@ function rP90(){
   const dt=s?.date||snap?.date||'';
   document.getElementById('p90-notice').textContent=
     (snap?.view==='isolated')?`${snap.phase} (${dt}) only.`:
-    s?.ko?`Cumulative Day 1 through ${snap?.phase}. Eliminated leagues dimmed.`:
-    `Cumulative Day 1 through ${s?.label||''} · ${dt}.`;
+    s?.ko?`Cumulative Game 1 through ${snap?.phase}. Eliminated leagues dimmed.`:
+    `Cumulative Game 1 through ${s?.label||''} · ${dt}.`;
   document.getElementById('p90-grid').innerHTML=mgrid(allSt(),null);
   document.getElementById('p90-gk-grid').innerHTML=gkgrid(allSt());
 }
